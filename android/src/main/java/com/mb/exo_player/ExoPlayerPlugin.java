@@ -154,25 +154,27 @@ public class ExoPlayerPlugin implements MethodCallHandler {
             this.tempRespectAudioFocus = respectAudioFocus;
             this.tempAudioPlayerPlugin = this;
 
-            NotificationActionMode notificationActionMode;
-            NotificationActionCallbackMode notificationActionCallbackMode;
-            if (notificationModeInt == 0) {
-              notificationActionMode = NotificationActionMode.NONE;
-            } else if (notificationModeInt == 1) {
-              notificationActionMode = NotificationActionMode.NEXT;
-            } else if (notificationModeInt == 2){
-              notificationActionMode = NotificationActionMode.PREVIOUS;
-            }else{
-              notificationActionMode = NotificationActionMode.ALL;
-            }
+            // NotificationActionMode notificationActionMode;
+            // NotificationActionCallbackMode notificationActionCallbackMode;
+            // if (notificationModeInt == 0) {
+            //   notificationActionMode = NotificationActionMode.NONE;
+            // } else if (notificationModeInt == 1) {
+            //   notificationActionMode = NotificationActionMode.NEXT;
+            // } else if (notificationModeInt == 2){
+            //   notificationActionMode = NotificationActionMode.PREVIOUS;
+            // }else{
+            //   notificationActionMode = NotificationActionMode.ALL;
+            // }
 
-            if(notificationActionCallbackModeInt == 0){
-              notificationActionCallbackMode = NotificationActionCallbackMode.DEFAULT;
-            }else{
-              notificationActionCallbackMode = NotificationActionCallbackMode.CUSTOM;
-            }
+            // if(notificationActionCallbackModeInt == 0){
+            //   notificationActionCallbackMode = NotificationActionCallbackMode.DEFAULT;
+            // }else{
+            //   notificationActionCallbackMode = NotificationActionCallbackMode.CUSTOM;
+            // }
 
-            this.audioObject = new AudioObject(url, smallIconFileName, title, subTitle, largeIconUrl, isLocal, notificationActionMode, notificationActionCallbackMode);
+            this.audioObject = new AudioObject(url, smallIconFileName, title, subTitle, largeIconUrl, isLocal
+            // , notificationActionMode, notificationActionCallbackMode
+            );
             // init player as ForegroundAudioPlayer service
             if(player != null && !player.isPlayerReleased()){
               player.play(this.audioObject);
@@ -240,7 +242,9 @@ public class ExoPlayerPlugin implements MethodCallHandler {
                 notificationActionCallbackMode = NotificationActionCallbackMode.CUSTOM;
               }
 
-              this.audioObjects.add(new AudioObject(urls.get(i), smallIconFileNames.get(i), titles.get(i), subTitles.get(i), largeIconUrls.get(i), isLocals.get(i), notificationActionMode, notificationActionCallbackMode));
+              this.audioObjects.add(new AudioObject(urls.get(i), smallIconFileNames.get(i), titles.get(i), subTitles.get(i), largeIconUrls.get(i), isLocals.get(i)
+              // , notificationActionMode, notificationActionCallbackMode
+              ));
             }
             // init player as ForegroundAudioPlayer service
             if(player != null && !player.isPlayerReleased()){

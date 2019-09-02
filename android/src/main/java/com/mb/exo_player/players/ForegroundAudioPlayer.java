@@ -35,7 +35,7 @@ import com.mb.exo_player.enums.PlayerMode;
 import com.mb.exo_player.enums.PlayerState;
 import com.mb.exo_player.interfaces.AudioPlayer;
 import com.mb.exo_player.models.AudioObject;
-import com.mb.exo_player.notifications.MediaNotificationManager;
+//import com.mb.exo_player.notifications.MediaNotificationManager;
 
 import java.util.ArrayList;
 

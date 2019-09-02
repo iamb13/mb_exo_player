@@ -24,10 +24,10 @@ import com.mb.exo_player.players.ForegroundAudioPlayer;
 import java.util.Map;
 
 public class MediaNotificationManager {
-    public static final String PLAY_ACTION = "com.daniel.exoPlayer.action.play";
-    public static final String PAUSE_ACTION = "com.daniel.exoPlayer.action.pause";
-    public static final String PREVIOUS_ACTION = "com.daniel.exoPlayer.action.previous";
-    public static final String NEXT_ACTION = "com.daniel.exoPlayer.action.next";
+    public static final String PLAY_ACTION = "com.mb.exoPlayer.action.play";
+    public static final String PAUSE_ACTION = "com.mb.exoPlayer.action.pause";
+    public static final String PREVIOUS_ACTION = "com.mb.exoPlayer.action.previous";
+    public static final String NEXT_ACTION = "com.mb.exoPlayer.action.next";
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "AH Playback";
 
@@ -60,7 +60,7 @@ public class MediaNotificationManager {
         this.mediaSession = mediaSession;
         this.activity = activity;
 
-        initIntents();
+        // initIntents();
     }
 
     private void initIntents() {
@@ -144,11 +144,11 @@ public class MediaNotificationManager {
         notification = builder.build();
 
         notificationManager.notify(NOTIFICATION_ID, notification);
-        if(this.isPlaying){
-            foregroundExoPlayer.startForeground(NOTIFICATION_ID, notification);
-        }else{
-            foregroundExoPlayer.stopForeground(false);
-        }
+//        if(this.isPlaying){
+//            foregroundExoPlayer.startForeground(NOTIFICATION_ID, notification);
+//        }else{
+//            foregroundExoPlayer.stopForeground(false);
+//        }
     }
 
     private NotificationManager initNotificationManager() {
@@ -170,9 +170,9 @@ public class MediaNotificationManager {
     }
 
     private NotificationCompat.Builder initNotificationActions(NotificationCompat.Builder builder) {
-        if (audioObject.getNotificationActionMode() == NotificationActionMode.PREVIOUS || audioObject.getNotificationActionMode() == NotificationActionMode.ALL) {
-            builder.addAction(R.drawable.ic_previous, "Previous", pprevIntent);
-        }
+//        if (audioObject.getNotificationActionMode() == NotificationActionMode.PREVIOUS || audioObject.getNotificationActionMode() == NotificationActionMode.ALL) {
+//            builder.addAction(R.drawable.ic_previous, "Previous", pprevIntent);
+//        }
 
         if (this.isPlaying) {
             builder.addAction(R.drawable.ic_pause, "Pause", ppauseIntent);
@@ -180,27 +180,27 @@ public class MediaNotificationManager {
             builder.addAction(R.drawable.ic_play, "Play", pplayIntent);
         }
 
-        if (audioObject.getNotificationActionMode() == NotificationActionMode.NEXT || audioObject.getNotificationActionMode() == NotificationActionMode.ALL) {
-            builder.addAction(R.drawable.ic_next, "Next", pnextIntent);
-        }
+//        if (audioObject.getNotificationActionMode() == NotificationActionMode.NEXT || audioObject.getNotificationActionMode() == NotificationActionMode.ALL) {
+//            builder.addAction(R.drawable.ic_next, "Next", pnextIntent);
+//        }
         return builder;
     }
 
     private NotificationCompat.Builder initNotificationStyle(NotificationCompat.Builder builder) {
-        if (audioObject.getNotificationActionMode() == NotificationActionMode.NEXT
-                || audioObject.getNotificationActionMode() == NotificationActionMode.PREVIOUS) {
-            builder.setStyle(new androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle()
-                    .setShowActionsInCompactView(0, 1)
-                    .setMediaSession(mediaSession.getSessionToken()));
-        } else if (audioObject.getNotificationActionMode() == NotificationActionMode.ALL) {
-            builder.setStyle(new androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle()
-                    .setShowActionsInCompactView(0, 1, 2)
-                    .setMediaSession(mediaSession.getSessionToken()));
-        } else {
-            builder.setStyle(new androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle()
-                    .setShowActionsInCompactView(0)
-                    .setMediaSession(mediaSession.getSessionToken()));
-        }
+//        if (audioObject.getNotificationActionMode() == NotificationActionMode.NEXT
+//                || audioObject.getNotificationActionMode() == NotificationActionMode.PREVIOUS) {
+//            builder.setStyle(new androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle()
+//                    .setShowActionsInCompactView(0, 1)
+//                    .setMediaSession(mediaSession.getSessionToken()));
+//        } else if (audioObject.getNotificationActionMode() == NotificationActionMode.ALL) {
+//            builder.setStyle(new androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle()
+//                    .setShowActionsInCompactView(0, 1, 2)
+//                    .setMediaSession(mediaSession.getSessionToken()));
+//        } else {
+//            builder.setStyle(new androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle()
+//                    .setShowActionsInCompactView(0)
+//                    .setMediaSession(mediaSession.getSessionToken()));
+//        }
         return builder;
     }
 
