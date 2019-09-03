@@ -203,7 +203,7 @@ class AudioPlayer {
     String title;
     String subTitle;
     String largeIconUrl;
-    bool isLocal;
+    bool isLocal = false;
     int notificationActionMode;
     int notificationActionCallbackMode = 0;
     if (playerMode == PlayerMode.FOREGROUND) {
