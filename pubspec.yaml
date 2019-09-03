@@ -1,8 +1,8 @@
 name: mb_exo_player
-description: A new flutter plugin project.
-version: 0.0.1
-author:
-homepage:
+description: A flutter plugin for playing audio files.
+version: 0.0.2
+author: Mahesh Bohara
+homepage: https://github.com/iamb13/mb_exo_player
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
