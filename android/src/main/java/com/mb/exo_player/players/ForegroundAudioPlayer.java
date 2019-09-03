@@ -28,7 +28,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.mb.exo_player.ExoPlayerPlugin;
+import com.mb.exo_player.MBExoPlayerPlugin;
 import com.mb.exo_player.enums.NotificationActionCallbackMode;
 import com.mb.exo_player.enums.NotificationActionName;
 import com.mb.exo_player.enums.PlayerMode;
@@ -51,7 +51,7 @@ public class ForegroundAudioPlayer extends Service implements AudioPlayer {
     private ForegroundAudioPlayer foregroundAudioPlayer;
 //    private MediaNotificationManager mediaNotificationManager;
     private Context context;
-    private ExoPlayerPlugin ref;
+    private MBExoPlayerPlugin ref;
     private MediaSessionCompat mediaSession;
     private String playerId;
 
@@ -140,7 +140,7 @@ public class ForegroundAudioPlayer extends Service implements AudioPlayer {
 
 
     @Override
-    public void initAudioPlayer(ExoPlayerPlugin ref, Activity activity, String playerId) {
+    public void initAudioPlayer(MBExoPlayerPlugin ref, Activity activity, String playerId) {
         this.initialized = true;
 
         this.playerId = playerId;

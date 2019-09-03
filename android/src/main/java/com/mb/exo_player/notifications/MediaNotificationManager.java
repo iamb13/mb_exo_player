@@ -214,16 +214,16 @@ public class MediaNotificationManager {
                             audioObject.setLargeIcon(bitmapMap.get(audioObject.getLargeIconUrl()));
                             showNotification();
                         }else{
-                            Log.e("ExoPlayerPlugin", "canceled showing notification!");
+                            Log.e("MBExoPlayerPlugin", "canceled showing notification!");
                         }
                     } else {
                         showNotification();
-                        Log.e("ExoPlayerPlugin", "Failed loading image!");
+                        Log.e("MBExoPlayerPlugin", "Failed loading image!");
                     }
                 }
             }).execute();
         } catch (Exception e) {
-            Log.e("ExoPlayerPlugin", "Failed loading image!");
+            Log.e("MBExoPlayerPlugin", "Failed loading image!");
         }
     }
 }

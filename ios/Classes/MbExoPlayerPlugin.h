@@ -1,4 +1,4 @@
 #import <Flutter/Flutter.h>
 
-@interface MbExoPlayerPlugin : NSObject<FlutterPlugin>
+@interface MBExoPlayerPlugin : NSObject<FlutterPlugin>
 @end

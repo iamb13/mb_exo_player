@@ -3,7 +3,7 @@ package com.mb.exo_player.interfaces;
 import android.app.Activity;
 import android.content.Context;
 
-import com.mb.exo_player.ExoPlayerPlugin;
+import com.mb.exo_player.MBExoPlayerPlugin;
 import com.mb.exo_player.models.AudioObject;
 import com.mb.exo_player.enums.PlayerMode;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public interface AudioPlayer {
 
     //initializers
-    void initAudioPlayer(ExoPlayerPlugin ref, Activity activity, String playerId);
+    void initAudioPlayer(MBExoPlayerPlugin ref, Activity activity, String playerId);
 
     void initExoPlayer(int index);
 

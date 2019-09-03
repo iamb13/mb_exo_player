@@ -36,9 +36,9 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-/** ExoPlayerPlugin */
-public class ExoPlayerPlugin implements MethodCallHandler {
-  private static final Logger LOGGER = Logger.getLogger(ExoPlayerPlugin.class.getCanonicalName());
+/** MBExoPlayerPlugin */
+public class MBExoPlayerPlugin implements MethodCallHandler {
+  private static final Logger LOGGER = Logger.getLogger(MBExoPlayerPlugin.class.getCanonicalName());
 
   private final MethodChannel channel;
   private final Handler handler = new Handler();
@@ -58,7 +58,7 @@ public class ExoPlayerPlugin implements MethodCallHandler {
   private String tempPlayerId;
   private boolean tempRepeatMode;
   private boolean tempRespectAudioFocus;
-  private ExoPlayerPlugin tempAudioPlayerPlugin;
+  private MBExoPlayerPlugin tempAudioPlayerPlugin;
   private int tempIndex;
 
   private ServiceConnection connection = new ServiceConnection() {
@@ -85,10 +85,10 @@ public class ExoPlayerPlugin implements MethodCallHandler {
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
     final MethodChannel channel = new MethodChannel(registrar.messenger(), "mb_exo_player");
-    channel.setMethodCallHandler(new ExoPlayerPlugin(channel, registrar.activity()));
+    channel.setMethodCallHandler(new MBExoPlayerPlugin(channel, registrar.activity()));
   }
 
-  private ExoPlayerPlugin(final MethodChannel channel, Activity activity) {
+  private MBExoPlayerPlugin(final MethodChannel channel, Activity activity) {
     this.channel = channel;
     this.activity = activity;
     this.context = activity.getApplicationContext();
@@ -399,7 +399,7 @@ public class ExoPlayerPlugin implements MethodCallHandler {
       ContextCompat.startForegroundService(this.context, new Intent(this.context, ForegroundAudioPlayer.class));
       this.context.bindService(new Intent(this.context, ForegroundAudioPlayer.class), connection, Context.BIND_AUTO_CREATE);
     }else{
-      Log.e("ExoPlayerPlugin", "Can't start more than 1 service at a time, to stop service call release method");
+      Log.e("MBExoPlayerPlugin", "Can't start more than 1 service at a time, to stop service call release method");
     }
   }
 
@@ -450,10 +450,10 @@ public class ExoPlayerPlugin implements MethodCallHandler {
     private final WeakReference<Map<String, AudioPlayer>> audioPlayers;
     private final WeakReference<MethodChannel> channel;
     private final WeakReference<Handler> handler;
-    private final WeakReference<ExoPlayerPlugin> audioPlayerPlugin;
+    private final WeakReference<MBExoPlayerPlugin> audioPlayerPlugin;
 
     private UpdateCallback(final Map<String, AudioPlayer> audioPlayers, final MethodChannel channel, final Handler handler,
-                           final ExoPlayerPlugin audioPlayerPlugin) {
+                           final MBExoPlayerPlugin audioPlayerPlugin) {
       this.audioPlayers = new WeakReference<>(audioPlayers);
       this.channel = new WeakReference<>(channel);
       this.handler = new WeakReference<>(handler);
@@ -465,7 +465,7 @@ public class ExoPlayerPlugin implements MethodCallHandler {
       final Map<String, AudioPlayer> audioPlayers = this.audioPlayers.get();
       final MethodChannel channel = this.channel.get();
       final Handler handler = this.handler.get();
-      final ExoPlayerPlugin audioPlayerPlugin = this.audioPlayerPlugin.get();
+      final MBExoPlayerPlugin audioPlayerPlugin = this.audioPlayerPlugin.get();
 
       if (audioPlayers == null || channel == null || handler == null || audioPlayerPlugin == null) {
         if (audioPlayerPlugin != null) {

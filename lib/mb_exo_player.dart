@@ -1,6 +1,23 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'dart:io' show Platform;
+
+/// Communicates the current state of the audio player.
+enum AudioPlayerState {
+  /// Player is stopped. No file is loaded to the player. Calling [resume] or
+  /// [pause] will result in exception.
+  STOPPED,
+  /// Currently playing a file. The user can [pause], [resume] or [stop] the
+  /// playback.
+  PLAYING,
+  /// Paused. The user can [resume] the playback without providing the URL.
+  PAUSED,
+  /// The playback has been completed. This state is the same as [STOPPED],
+  /// however we differentiate it because some clients might want to know when
+  /// the playback is done versus when the user has stopped the playback.
+  COMPLETED,
+}
 
 enum PlayerState {
   RELEASED,
@@ -23,9 +40,8 @@ enum Result {
 }
 
 class AudioPlayer {
-  static MethodChannel _channel =
-      const MethodChannel('mb_exo_player')
-        ..setMethodCallHandler(platformCallHandler);
+  static const MethodChannel _channel =
+      const MethodChannel('mb_exo_player');
 
   static bool logEnabled = false;
   static final players = Map<String, AudioPlayer>();
@@ -101,7 +117,6 @@ class AudioPlayer {
   Stream<String> get onPlayerError =>
       _errorController.stream; //! TODO handle error stream
 
-
   /// Stream of current playing index.
   ///
   /// Events are sent when current index of a player is being changed.
@@ -112,13 +127,54 @@ class AudioPlayer {
 
   PlayerState get state => _audioPlayerState;
 
+  //code for ios
+
+  final StreamController<AudioPlayerState> _iPlayerStateController =
+      new StreamController.broadcast();
+
+  final StreamController<Duration> _iPositionController =
+      new StreamController.broadcast();
+
+
+  AudioPlayerState _istate = AudioPlayerState.STOPPED;
+  Duration _iduration = const Duration();
+
   /// Initializes AudioPlayer
   ///
   AudioPlayer() {
-    _playerState = PlayerState.RELEASED;
-//    _playerId = _uuid.v4();
-    players['123456'] = this;
+    if(Platform.isAndroid) {
+      print('Android device code initialization');
+      _playerState = PlayerState.RELEASED;
+  //    _playerId = _uuid.v4();
+      players['123456'] = this;
+      _channel.setMethodCallHandler(platformCallHandler);
+    } else if(Platform.isIOS) {
+      print('ios device code initialization');
+      // _channel.setMethodCallHandler(_audioPlayerStateChange);
+    }
   }
+
+  //ios 
+
+
+  /// Stream for subscribing to player state change events.
+  Stream<AudioPlayerState> get oniPlayerStateChanged => _iPlayerStateController.stream;
+
+  /// Reports what the player is currently doing.
+  AudioPlayerState get iState => _istate;
+
+  /// Reports the duration of the current media being played. It might return
+  /// 0 if we have not determined the length of the media yet. It is best to
+  /// call this from a state listener when the state has become
+  /// [AudioPlayerState.PLAYING].
+  Duration get duration => _iduration;
+
+  /// Stream for subscribing to audio position change events. Roughly fires
+  /// every 200 milliseconds. Will continously update the position of the
+  /// playback if the status is [AudioPlayerState.PLAYING].
+  Stream<Duration> get oniAudioPositionChanged => _iPositionController.stream;
+
+
 
 
   /// Plays an audio.
@@ -131,6 +187,7 @@ class AudioPlayer {
         bool respectAudioFocus = false,
         Duration position = const Duration(milliseconds: 0),
         PlayerMode playerMode = PlayerMode.BACKGROUND,
+        bool isLocal = false
 //        AudioNotification audioNotification,
       }) async {
     playerMode ??= PlayerMode.BACKGROUND;
@@ -160,6 +217,9 @@ class AudioPlayer {
 
       isBackground = false;
     }
+    if(Platform.isIOS) {
+      return await _channel.invokeMethod('play', {'url': url, 'isLocal': isLocal});
+    }
 
     return ResultMap[await _invokeMethod('play', {
       'url': url,
@@ -184,6 +244,9 @@ class AudioPlayer {
   /// If you call [resume] later, the audio will resume from the point that it
   /// has been paused.
   Future<Result> pause() async {
+    if(Platform.isIOS) {
+      return await _channel.invokeMethod('pause');
+    }
     return ResultMap[await _invokeMethod('pause')];
   }
 
@@ -206,6 +269,7 @@ class AudioPlayer {
   /// The position is going to be reset and you will no longer be able to resume
   /// from the last point.
   Future<Result> stop() async {
+    if(Platform.isIOS) return await _channel.invokeMethod('stop');
     return ResultMap[await _invokeMethod('stop')];
   }
 
@@ -219,6 +283,9 @@ class AudioPlayer {
   Future<Result> release() async {
     return ResultMap[await _invokeMethod('release')];
   }
+
+   // ios /// Seek to a specific position in the audio stream.
+  Future<void> seek(double seconds) async => await _channel.invokeMethod('seek', seconds);
 
 
   /// Moves the cursor to the desired position.
@@ -279,6 +346,7 @@ class AudioPlayer {
       String method, [
         Map<String, dynamic> arguments,
       ]) {
+        print('invoke method called, ${method}');
     arguments ??= const {};
 
     final Map<String, dynamic> withPlayerId = Map.of(arguments)
@@ -366,6 +434,42 @@ class AudioPlayer {
 //      futures.add(_notificationActionController.close());
 //    }
     await Future.wait(futures);
+  }
+
+  Future<void> _audioPlayerStateChange(MethodCall call) async {
+    switch (call.method) {
+      case "audio.onCurrentPosition":
+        assert(_istate == AudioPlayerState.PLAYING);
+        _positionController.add(new Duration(milliseconds: call.arguments));
+        break;
+      case "audio.onStart":
+        _istate = AudioPlayerState.PLAYING;
+        _iPlayerStateController.add(AudioPlayerState.PLAYING);
+        _iduration = new Duration(milliseconds: call.arguments);
+        break;
+      case "audio.onPause":
+        _istate = AudioPlayerState.PAUSED;
+        _iPlayerStateController.add(AudioPlayerState.PAUSED);
+        break;
+      case "audio.onStop":
+        _istate = AudioPlayerState.STOPPED;
+        _iPlayerStateController.add(AudioPlayerState.STOPPED);
+        break;
+      case "audio.onComplete":
+        _istate = AudioPlayerState.COMPLETED;
+        _iPlayerStateController.add(AudioPlayerState.COMPLETED);
+        break;
+      case "audio.onError":
+        // If there's an error, we assume the player has stopped.
+        _istate = AudioPlayerState.STOPPED;
+        _iPlayerStateController.addError(call.arguments);
+        // TODO: Handle error arguments here. It is not useful to pass this
+        // to the client since each platform creates different error string
+        // formats so we can't expect client to parse these.
+        break;
+      default:
+        throw new ArgumentError('Unknown method ${call.method} ');
+    }
   }
 
 

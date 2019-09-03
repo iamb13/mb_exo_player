@@ -26,7 +26,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 //import com.mb.exo_player.notifications.MediaNotificationManager;
-import com.mb.exo_player.ExoPlayerPlugin;
+import com.mb.exo_player.MBExoPlayerPlugin;
 import com.mb.exo_player.enums.PlayerState;
 import com.mb.exo_player.enums.PlayerMode;
 import com.mb.exo_player.interfaces.AudioPlayer;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 public class BackgroundAudioPlayer implements AudioPlayer {
 
     private Context context;
-    private ExoPlayerPlugin ref;
+    private MBExoPlayerPlugin ref;
     private BackgroundAudioPlayer backgroundAudioPlayer;
     private String playerId;
 
@@ -63,7 +63,7 @@ public class BackgroundAudioPlayer implements AudioPlayer {
 
     
     @Override
-    public void initAudioPlayer (ExoPlayerPlugin ref, Activity activity, String playerId) {
+    public void initAudioPlayer (MBExoPlayerPlugin ref, Activity activity, String playerId) {
         this.initialized = true;
 
         this.ref = ref;
