@@ -33,11 +33,11 @@ FlutterMethodChannel *_channel;
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:CHANNEL_NAME
-            binaryMessenger:[registrar messenger]];
+                                   methodChannelWithName:CHANNEL_NAME
+                                   binaryMessenger:[registrar messenger]];
   MBExoPlayerPlugin* instance = [[MBExoPlayerPlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
-    _channel = channel;
+  _channel = channel;
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {

@@ -150,7 +150,7 @@ class AudioPlayer {
       _channel.setMethodCallHandler(platformCallHandler);
     } else if(Platform.isIOS) {
       print('ios device code initialization');
-      // _channel.setMethodCallHandler(_audioPlayerStateChange);
+      _channel.setMethodCallHandler(_audioPlayerStateChange);
     }
   }
 
@@ -176,8 +176,12 @@ class AudioPlayer {
 
 
 
+  /// Play a given url. -> ios device
+  Future<void> iPlay(String url, {bool isLocal: false}) async {
+      return await _channel.invokeMethod('play', {'url': url, 'isLocal': isLocal});
+  }
 
-  /// Plays an audio.
+  /// Plays an audio. android device
   ///
   /// If [PlayerMode] is set to [PlayerMode.FOREGROUND], then you also need to pass:
   /// [audioNotification] for providing the foreground notification.
@@ -187,7 +191,6 @@ class AudioPlayer {
         bool respectAudioFocus = false,
         Duration position = const Duration(milliseconds: 0),
         PlayerMode playerMode = PlayerMode.BACKGROUND,
-        bool isLocal = false
 //        AudioNotification audioNotification,
       }) async {
     playerMode ??= PlayerMode.BACKGROUND;
@@ -200,7 +203,7 @@ class AudioPlayer {
     String title;
     String subTitle;
     String largeIconUrl;
-    bool isLocal;
+    bool isLocal = false;
     int notificationActionMode;
     int notificationActionCallbackMode = 0;
     if (playerMode == PlayerMode.FOREGROUND) {
@@ -216,9 +219,6 @@ class AudioPlayer {
 //      audioNotification.notificationActionCallbackMode];
 
       isBackground = false;
-    }
-    if(Platform.isIOS) {
-      return await _channel.invokeMethod('play', {'url': url, 'isLocal': isLocal});
     }
 
     return ResultMap[await _invokeMethod('play', {
@@ -244,9 +244,6 @@ class AudioPlayer {
   /// If you call [resume] later, the audio will resume from the point that it
   /// has been paused.
   Future<Result> pause() async {
-    if(Platform.isIOS) {
-      return await _channel.invokeMethod('pause');
-    }
     return ResultMap[await _invokeMethod('pause')];
   }
 
@@ -269,7 +266,6 @@ class AudioPlayer {
   /// The position is going to be reset and you will no longer be able to resume
   /// from the last point.
   Future<Result> stop() async {
-    if(Platform.isIOS) return await _channel.invokeMethod('stop');
     return ResultMap[await _invokeMethod('stop')];
   }
 
@@ -345,8 +341,11 @@ class AudioPlayer {
   Future<int> _invokeMethod(
       String method, [
         Map<String, dynamic> arguments,
-      ]) {
-        print('invoke method called, ${method}');
+      ]) async {
+
+    if(Platform.isIOS) {
+      return await _channel.invokeMethod(method);
+    } else {
     arguments ??= const {};
 
     final Map<String, dynamic> withPlayerId = Map.of(arguments)
@@ -355,6 +354,7 @@ class AudioPlayer {
     return _channel
         .invokeMethod(method, withPlayerId)
         .then((result) => (result as int));
+    }
   }
 
 
